@@ -70,7 +70,7 @@ const LandingPage = () => {
               <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
                 <Car className="w-5 h-5 text-primary" />
               </div>
-              <span className="text-xl font-bold text-foreground">ParkSense</span>
+              <span className="text-xl font-bold text-foreground">Addis Parking</span>
             </Link>
             
             <div className="hidden md:flex items-center gap-8">
@@ -171,23 +171,6 @@ const LandingPage = () => {
                 Watch Demo
               </Button>
             </div>
-          </motion.div>
-
-          {/* Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2"
-          >
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="flex flex-col items-center gap-2 text-muted-foreground"
-            >
-              <span className="text-sm">Scroll to explore</span>
-              <ChevronDown className="w-5 h-5" />
-            </motion.div>
           </motion.div>
         </div>
       </section>
