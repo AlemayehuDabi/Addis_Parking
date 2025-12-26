@@ -1,0 +1,52 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Bun
+# Note: DO NOT ignore bun.lockb - to keep versions consistent
+# bun.lockb 
+
+# Testing
+/coverage
+/.nyc_output
+
+# Next.js / Build Output
+.next/
+out/
+build/
+dist/
+.cache/
+
+# Environment Variables
+# NEVER commit your actual .env files to GitHub
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun-debug.log*
+*.log
+
+# IDEs / Editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Debug
+.eslintcache
