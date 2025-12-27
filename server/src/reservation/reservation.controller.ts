@@ -2,14 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 
 @Controller('reservation')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
   @Post()
-  create(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationService.create(createReservationDto);
+  create(@Body() createReservationDto: CreateReservationDto, @Session() session: UserSession) {
+    return this.reservationService.create(session, createReservationDto);
   }
 
   @Get()

@@ -14,7 +14,7 @@ export class ReservationService {
   ) {}
 
   
-  async create(@Session() session: UserSession, createReservationDto: CreateReservationDto) {
+  async create(session: UserSession, createReservationDto: CreateReservationDto) {
     return await this.reservationModel.create({
       userId: session.user.id,
       spotId: createReservationDto.spotId,

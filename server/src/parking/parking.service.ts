@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ParkingStatusDto, UpdateParkingDto } from './dto/update-parking.dto';
-import { Spot, SpotSchema, SpotStatus } from './parking.schema';
+import { Spot, SpotStatus } from './parking.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
