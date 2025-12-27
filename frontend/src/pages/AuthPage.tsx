@@ -20,6 +20,8 @@ const AuthPage = () => {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL
+
   useEffect(() => {
     const urlMode = searchParams.get("mode");
     if (urlMode === "signup" || urlMode === "signin") {
@@ -42,19 +44,83 @@ const AuthPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate authentication
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    toast({
-      title: mode === "signin" ? "Welcome back!" : "Account created!",
-      description: "Redirecting to your dashboard...",
-    });
-    
-    setTimeout(() => {
-      navigate("/app");
-    }, 1000);
-    
+
+    if(mode == "signup"){
+      
+        const SignupBody = {
+          name,
+          email,
+          password
+        }
+
+        console.log("This is a sign-up body: ", SignupBody)
+
+        const response = await fetch(`${API_URL}/auth/signup`, {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(SignupBody)
+        })
+
+        if(!response.ok){
+          const error = await response.json()
+          console.log("sign up failed: ", error)
+          return toast({
+            title: "Unable to sign-up",
+            description: error
+          })
+        }
+
+        const data = await response.json()
+        console.log("sign in success: ", data)
+
+        toast({
+          title: "Account created!",
+          description: "Redirecting to your dashboard...",
+        });
+
+        setTimeout(() => {
+          navigate("/app");
+        }, 1000);
+    }else {
+      const SigninBody = {
+        email,
+        password
+      }
+
+      console.log("This is a sign-in body: ", SigninBody)
+
+      const response = await fetch(`${API_URL}/auth/signin`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(SigninBody)
+      })
+
+      if(!response.ok){
+        const error = await response.json()
+        console.log("sign in failed: ", error)
+        return toast({
+          title: "Unable to sign-in",
+          description: error
+        })
+      }
+
+      const data = await response.json()
+
+      console.log("sign in success: ", data)
+      
+      toast({
+        title: "Welcome Back!",
+        description: "Redirecting to your dashboard...",
+      });
+
+      setTimeout(() => {
+        navigate("/app");
+      }, 1000);
+    }
     setIsLoading(false);
   };
 
