@@ -10,10 +10,10 @@ export class ParkingGateway {
 
   @SubscribeMessage('update_status')
   async handleUpdate(client: any, payload: string) {
-    const data = JSON.parse(payload); // { spotId: 1, isParked: true }
+    const data = JSON.parse(payload); // { sensorId: 1, isParked: true }
     
     // Process through service to avoid unnecessary DB hits
-    const changed = await this.parkingService.processStatus(data.spotId, data.isParked);
+    const changed = await this.parkingService.processStatusUpdate(data.sensorId, data.isParked);
     
     // If state actually changed, broadcast to the Website Frontend
     if (changed) {

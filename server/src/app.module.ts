@@ -5,12 +5,14 @@ import { auth } from 'lib/auth';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { AuthenticationModule } from './auth/auth.module';
 import { ParkingModule } from './parking/parking.module';
+import { ReservationModule } from './reservation/reservation.module';
 
 @Module({
   imports: [
     AuthModule.forRoot({auth}),
     AuthenticationModule,
-    ParkingModule
+    ParkingModule,
+    ReservationModule
   ],
   controllers: [AppController],
   providers: [AppService],

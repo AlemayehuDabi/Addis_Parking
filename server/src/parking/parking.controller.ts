@@ -7,16 +7,6 @@ import { UpdateParkingDto } from './dto/update-parking.dto';
 export class ParkingController {
   constructor(private readonly parkingService: ParkingService) {}
 
-  @Post()
-  park(@Body() createParkingDto: CreateParkingDto) {
-    return this.parkingService.parking(createParkingDto);
-  }
-
-  @Post()
-  reserve(@Body() reserveParkingDto: ReserveParkingDto){
-    return this.parkingService.
-  }
-
   @Get()
   findAll() {
     return this.parkingService.findAll();

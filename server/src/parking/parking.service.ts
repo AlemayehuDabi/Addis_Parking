@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateParkingDto, ReserveParkingDto } from './dto/create-parking.dto';
 import { ParkingStatusDto, UpdateParkingDto } from './dto/update-parking.dto';
+import { Spot, SpotSchema, SpotStatus } from './parking.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 
 @Injectable()
 export class ParkingService {
@@ -11,27 +14,24 @@ export class ParkingService {
   // nosiy of utrasonic change - 4.9(parked) and 5.1(unparked) b/c of wind ...
   private lastChangeTime = new Map<number, number>();
 
-  park(createParkingDto: CreateParkingDto) {
-    return 'This action adds a new parking';
-  }
-
-  reserve(reserveParkingDto: ReserveParkingDto){
-    return `this is the reserve`
-  }
+  // schema constructor
+  constructor(
+    @InjectModel(Spot.name) private spotModel: Model<Spot> // Injecting the Model
+  ) {}
 
   // checking if the value changed
-  async processStatusUpdate(spotId: number, isParked: boolean) {
-    const lastState = this.currentState.get(spotId);
+  async processStatusUpdate(sensorId: number, isParked: boolean) {
+    const lastState = this.currentState.get(sensorId);
     const now = Date.now();
   
     if (isParked !== lastState) {
       // A change is detected, but let's wait to ensure it's not a glitch
-      const lastTime = this.lastChangeTime.get(spotId) || 0;
+      const lastTime = this.lastChangeTime.get(sensorId) || 0;
       
       if (now - lastTime > 2000) { // Only update if 5 seconds have passed since last flip
-        this.currentState.set(spotId, isParked);
-        this.lastChangeTime.set(spotId, now);
-        await this.saveToDatabase(spotId, isParked);
+        this.currentState.set(sensorId, isParked);
+        this.lastChangeTime.set(sensorId, now);
+        await this.saveToDatabase(sensorId, isParked);
         return { changed: true };
       }
     }
@@ -40,27 +40,20 @@ export class ParkingService {
   }
 
   // save it inside db
-  private async saveToDatabase(spotId: number, isParked: boolean) {
+  private async saveToDatabase(sensorId: number, isParked: boolean) {
     // Update the current status of the spot
-    await this.prisma.spot.update({
-      where: { id: spotId },
-      data: { status: isParked ? 'OCCUPIED' : 'AVAILABLE' },
-    });
-  }
+    const updatedSpot = await this.spotModel.findOneAndUpdate(
+      { sensorId }, // Find by the Arduino's sensor ID
+      { 
+        $set: { 
+          isHardwareDetected: isParked,
+          status: isParked ? SpotStatus.OCCUPIED : SpotStatus.AVAILABLE,
+          lastHeartbeat: new Date()
+        } 
+      },
+      { new: true, upsert: true } // 'upsert' creates it if it doesn't exist
+    );
 
-  findAll() {
-    return `This action returns all parking`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} parking`;
-  }
-
-  update(id: number, updateParkingDto: UpdateParkingDto) {
-    return `This action updates a #${id} parking`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} parking`;
+    return updatedSpot;
   }
 }
