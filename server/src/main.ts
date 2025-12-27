@@ -12,7 +12,7 @@ async function bootstrap() {
 
   // api integration
   app.enableCors({
-    origin: ['http://localhost:5173', 'addis-parking.vercel.app'], // Your React app URL
+    origin: ['http://localhost:8080/', 'addis-parking.vercel.app'], // Your React app URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

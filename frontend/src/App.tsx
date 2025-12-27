@@ -11,6 +11,7 @@ import LotsPage from "./pages/LotsPage";
 import WalletPage from "./pages/WalletPage";
 import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
+import { ProtectedRoute } from "./components/auth/protectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -26,10 +27,10 @@ const App = () => (
           <Route path="/auth" element={<AuthPage />} />
           
           {/* App Routes with Layout */}
-          <Route path="/app" element={<AppLayout><MapPage /></AppLayout>} />
-          <Route path="/app/lots" element={<AppLayout><LotsPage /></AppLayout>} />
-          <Route path="/app/wallet" element={<AppLayout><WalletPage /></AppLayout>} />
-          <Route path="/app/dashboard" element={<AppLayout><DashboardPage /></AppLayout>} />
+          <Route path="/app" element={<ProtectedRoute><AppLayout><MapPage /></AppLayout></ProtectedRoute>} />
+          <Route path="/app/lots" element={<ProtectedRoute><AppLayout><LotsPage /></AppLayout></ProtectedRoute>} />
+          <Route path="/app/wallet" element={<ProtectedRoute><AppLayout><WalletPage /></AppLayout></ProtectedRoute>} />
+          <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout><DashboardPage /></AppLayout></ProtectedRoute>} />
           
           {/* Fallback */}
           <Route path="*" element={<NotFound />} />
