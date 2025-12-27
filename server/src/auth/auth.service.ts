@@ -6,7 +6,6 @@ import { auth } from 'lib/auth';
 @Injectable()
 export class AuthService {
   async signup(createAuthDto: SignupAuthDto) {
-    try {
       const { name, email, password} = createAuthDto
 
       const data = await auth.api.signUpEmail({
@@ -20,15 +19,9 @@ export class AuthService {
       console.log("sign-up response: ", data)
 
       return data
-    } catch (error) {
-      console.error("sign up error: ", error)
-      throw new Error()
-    }
-
   }
 
   login(loginAuthDto: LoginAuthDto) {
-    try {
       const {email,password} = loginAuthDto
     
       const data = auth.api.signInEmail({
@@ -41,9 +34,6 @@ export class AuthService {
       console.log("sign-in response: ", data)
 
       return data
-    } catch (error) {
-      console.log("sign-in error: ", error)
-    }
   }
 
   findAll() {

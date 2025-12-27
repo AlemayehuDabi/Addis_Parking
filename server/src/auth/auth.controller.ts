@@ -2,17 +2,20 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AuthService } from './auth.service';
 import { SignupAuthDto, LoginAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
+  @AllowAnonymous()
   signup(@Body() createAuthDto: SignupAuthDto) {
     return this.authService.signup(createAuthDto);
   }
 
   @Post('/login')
+  @AllowAnonymous()
   login(@Body() loginAuthDto: LoginAuthDto){
     return this.authService.login(loginAuthDto)
   }
