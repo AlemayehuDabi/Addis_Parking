@@ -107,7 +107,7 @@ const AuthPage = () => {
             <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
               <Car className="w-6 h-6 text-primary" />
             </div>
-            <span className="text-2xl font-bold text-foreground">ParkSense</span>
+            <span className="text-2xl font-bold text-foreground">Addis Parking</span>
           </Link>
 
           <motion.div
@@ -155,7 +155,7 @@ const AuthPage = () => {
             <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
               <Car className="w-5 h-5 text-primary" />
             </div>
-            <span className="text-xl font-bold text-foreground">ParkSense</span>
+            <span className="text-xl font-bold text-foreground">Addis Parking</span>
           </Link>
 
           <AnimatePresence mode="wait">

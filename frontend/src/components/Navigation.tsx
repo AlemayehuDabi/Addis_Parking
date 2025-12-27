@@ -67,7 +67,7 @@ export const Sidebar = () => {
           <Car className="h-5 w-5 text-primary-foreground" />
         </div>
         <div>
-          <h1 className="font-bold text-sidebar-foreground">ParkSense</h1>
+          <h1 className="font-bold text-sidebar-foreground">Addis Parking</h1>
           <p className="text-xs text-sidebar-foreground/60">Smart Parking</p>
         </div>
       </Link>

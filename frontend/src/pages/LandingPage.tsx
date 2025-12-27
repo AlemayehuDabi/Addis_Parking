@@ -305,7 +305,7 @@ const LandingPage = () => {
               </h2>
               <p className="text-lg text-muted-foreground mb-6">
                 30% of urban traffic is caused by drivers searching for parking. 
-                ParkSense eliminates this waste by providing real-time visibility into every parking space.
+                Addis Parking eliminates this waste by providing real-time visibility into every parking space.
               </p>
               <p className="text-lg text-muted-foreground mb-8">
                 Our IoT-first approach combines industrial-grade hardware with consumer-friendly software, 
@@ -380,7 +380,7 @@ const LandingPage = () => {
                 Get in Touch
               </h2>
               <p className="text-muted-foreground">
-                Interested in deploying ParkSense at your facility? Let's talk.
+                Interested in deploying Addis Parking at your facility? Let's talk.
               </p>
             </div>
             
@@ -446,10 +446,10 @@ const LandingPage = () => {
               <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
                 <Car className="w-5 h-5 text-primary" />
               </div>
-              <span className="text-lg font-bold text-foreground">ParkSense</span>
+              <span className="text-lg font-bold text-foreground">Addis Parking</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2024 ParkSense. Built with ❤️ in Ethiopia.
+              © 2024 Addis Parking. Built with ❤️ in Ethiopia.
             </p>
             <div className="flex items-center gap-6">
               <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
