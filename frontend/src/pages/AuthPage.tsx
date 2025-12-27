@@ -248,7 +248,7 @@ const AuthPage = () => {
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <Button
                   variant="outline"
-                  className="rounded-xl py-5 border-border/50 hover:bg-secondary/50"
+                  className="rounded-xl py-5 border-border/50 hover:bg-secondary/50 text-gray-600 hover:text-gray-400"
                   onClick={() => handleSocialLogin("Google")}
                 >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -261,7 +261,7 @@ const AuthPage = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="rounded-xl py-5 border-border/50 hover:bg-secondary/50"
+                  className="rounded-xl py-5 border-border/50 hover:bg-secondary/50 text-gray-600 hover:text-gray-400"
                   onClick={() => handleSocialLogin("Apple")}
                 >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
@@ -296,7 +296,7 @@ const AuthPage = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Full name"
-                      className="w-full pl-12 pr-4 py-4 rounded-xl bg-secondary border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                      className="text-white w-full pl-12 pr-4 py-4 rounded-xl bg-secondary border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                       required
                     />
                   </motion.div>
@@ -309,7 +309,7 @@ const AuthPage = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email address"
-                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-secondary border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="text-white w-full pl-12 pr-4 py-4 rounded-xl bg-secondary border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                     required
                   />
                 </div>
@@ -321,7 +321,7 @@ const AuthPage = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
-                    className="w-full pl-12 pr-12 py-4 rounded-xl bg-secondary border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="text-white w-full pl-12 pr-12 py-4 rounded-xl bg-secondary border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                     required
                   />
                   <button
