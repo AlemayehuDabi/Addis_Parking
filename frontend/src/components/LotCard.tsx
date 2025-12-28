@@ -1,7 +1,6 @@
-import { motion } from 'framer-motion';
-import { ParkingLot } from '@/types/parking';
-import { MapPin, Star, Clock, Car } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { motion } from "framer-motion";
+import { ParkingLot } from "@/types/parking";
+import { MapPin, Star, Clock, Car } from "lucide-react";
 
 interface LotCardProps {
   lot: ParkingLot;
@@ -11,14 +10,14 @@ interface LotCardProps {
 
 export const LotCard = ({ lot, isSelected, onSelect }: LotCardProps) => {
   const availabilityPercentage = (lot.availableSlots / lot.totalSlots) * 100;
-  
+
   return (
     <motion.div
       onClick={() => onSelect(lot)}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       className={`glass-card-hover cursor-pointer rounded-xl p-4 ${
-        isSelected ? 'ring-2 ring-primary' : ''
+        isSelected ? "ring-2 ring-primary" : ""
       }`}
     >
       <div className="flex items-start justify-between">
@@ -42,9 +41,15 @@ export const LotCard = ({ lot, isSelected, onSelect }: LotCardProps) => {
             <Car className="h-4 w-4" />
             Available Spots
           </span>
-          <span className={`font-semibold ${
-            lot.availableSlots > 10 ? 'text-success' : lot.availableSlots > 0 ? 'text-warning' : 'text-destructive'
-          }`}>
+          <span
+            className={`font-semibold ${
+              lot.availableSlots > 10
+                ? "text-success"
+                : lot.availableSlots > 0
+                ? "text-warning"
+                : "text-destructive"
+            }`}
+          >
             {lot.availableSlots}/{lot.totalSlots}
           </span>
         </div>
@@ -52,13 +57,13 @@ export const LotCard = ({ lot, isSelected, onSelect }: LotCardProps) => {
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${availabilityPercentage}%` }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className={`h-full rounded-full ${
               availabilityPercentage > 50
-                ? 'bg-success'
+                ? "bg-success"
                 : availabilityPercentage > 20
-                ? 'bg-warning'
-                : 'bg-destructive'
+                ? "bg-warning"
+                : "bg-destructive"
             }`}
           />
         </div>
@@ -73,7 +78,9 @@ export const LotCard = ({ lot, isSelected, onSelect }: LotCardProps) => {
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-lg font-bold text-foreground">{lot.pricePerHour}</span>
+          <span className="text-lg font-bold text-foreground">
+            {lot.pricePerHour}
+          </span>
           <span className="text-sm text-muted-foreground">ETB/hr</span>
         </div>
       </div>

@@ -1,31 +1,29 @@
-import { useState, useEffect, useCallback } from 'react';
-import { ParkingSlot, ParkingLot, SlotStatus } from '@/types/parking';
+import { useState, useEffect, useCallback } from "react";
+import { ParkingSlot, ParkingLot, SlotStatus } from "@/types/parking";
 
-const generateSlots = (rows: string[], slotsPerRow: number): ParkingSlot[] => {
-  const slots: ParkingSlot[] = [];
-  const statuses: SlotStatus[] = ['available', 'occupied', 'reserved'];
-  
-  rows.forEach((row) => {
-    for (let i = 1; i <= slotsPerRow; i++) {
-      const randomStatus = statuses[Math.floor(Math.random() * 3)];
-      slots.push({
-        id: `${row}${i}`,
-        row,
-        number: i,
-        status: randomStatus,
-        sensorId: `ESP32-${row}${i}`,
-      });
-    }
-  });
-  
-  return slots;
-};
+const WS_URL = "ws://192.168.1.113:8080";
 
 const initialLots: ParkingLot[] = [
   {
-    id: 'lot-1',
-    name: 'Bole Medhanialem Parking',
-    address: 'Bole Road, Addis Ababa',
+    id: "sensor",
+    name: "Prototype (Live ESP32)",
+    address: "AASTU - Lab",
+    latitude: 9.3,
+    longitude: 38.6,
+    totalSlots: 2,
+    availableSlots: 2,
+    pricePerHour: 50,
+    rating: 5.0,
+    distance: 0.1,
+    slots: [
+      { id: "1", row: "S", number: 1, status: "available", sensorId: "1" },
+      { id: "2", row: "S", number: 2, status: "available", sensorId: "2" },
+    ],
+  },
+  {
+    id: "lot-1",
+    name: "Bole Medhanialem Parking",
+    address: "Bole Road, Addis Ababa",
     latitude: 9.0054,
     longitude: 38.7636,
     totalSlots: 48,
@@ -33,120 +31,66 @@ const initialLots: ParkingLot[] = [
     pricePerHour: 50,
     rating: 4.8,
     distance: 0.3,
-    slots: generateSlots(['A', 'B', 'C', 'D'], 12),
-  },
-  {
-    id: 'lot-2',
-    name: 'Meskel Square Underground',
-    address: 'Meskel Square, Addis Ababa',
-    latitude: 9.0107,
-    longitude: 38.7612,
-    totalSlots: 120,
-    availableSlots: 45,
-    pricePerHour: 40,
-    rating: 4.5,
-    distance: 1.2,
-    slots: generateSlots(['A', 'B', 'C', 'D', 'E', 'F'], 20),
-  },
-  {
-    id: 'lot-3',
-    name: 'Edna Mall Parking',
-    address: 'CMC Road, Addis Ababa',
-    latitude: 9.0321,
-    longitude: 38.8012,
-    totalSlots: 80,
-    availableSlots: 32,
-    pricePerHour: 35,
-    rating: 4.6,
-    distance: 2.5,
-    slots: generateSlots(['A', 'B', 'C', 'D', 'E'], 16),
-  },
-  {
-    id: 'lot-4',
-    name: 'Friendship Park Lot',
-    address: 'Friendship Park, Addis Ababa',
-    latitude: 8.9957,
-    longitude: 38.7789,
-    totalSlots: 60,
-    availableSlots: 28,
-    pricePerHour: 30,
-    rating: 4.3,
-    distance: 3.1,
-    slots: generateSlots(['A', 'B', 'C'], 20),
+    slots: [], // Assuming generateSlots helper is available or simplified
   },
 ];
 
 export const useParkingState = () => {
   const [lots, setLots] = useState<ParkingLot[]>(initialLots);
-  const [selectedLot, setSelectedLot] = useState<ParkingLot | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<ParkingSlot | null>(null);
+  const [selectedLotId, setSelectedLotId] = useState<string | null>(null);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 
-  // Simulate ESP32 sensor updates
-  useEffect(() => {
-    const interval = setInterval(() => {
+  // Derive the active lot and slot from the current 'lots' state
+  const selectedLot = lots.find((l) => l.id === selectedLotId) || null;
+  const selectedSlot =
+    selectedLot?.slots.find((s) => s.id === selectedSlotId) || null;
+
+  const updateSlotStatus = useCallback(
+    (lotId: string, slotId: string, status: SlotStatus) => {
       setLots((prevLots) =>
         prevLots.map((lot) => {
-          const updatedSlots = lot.slots.map((slot) => {
-            // 5% chance of status change to simulate real sensor data
-            if (Math.random() < 0.05) {
-              const currentStatus = slot.status;
-              let newStatus: SlotStatus;
-              
-              if (currentStatus === 'occupied') {
-                newStatus = Math.random() < 0.7 ? 'available' : 'occupied';
-              } else if (currentStatus === 'available') {
-                newStatus = Math.random() < 0.3 ? 'occupied' : 'available';
-              } else {
-                newStatus = slot.status;
-              }
-              
-              return { ...slot, status: newStatus };
-            }
-            return slot;
-          });
-
-          const availableSlots = updatedSlots.filter((s) => s.status === 'available').length;
-          
-          return { ...lot, slots: updatedSlots, availableSlots };
+          if (lot.id !== lotId) return lot;
+          const updatedSlots = lot.slots.map((s) =>
+            s.id === slotId ? { ...s, status } : s
+          );
+          return {
+            ...lot,
+            slots: updatedSlots,
+            availableSlots: updatedSlots.filter((s) => s.status === "available")
+              .length,
+          };
         })
       );
-    }, 3000);
+    },
+    []
+  );
 
-    return () => clearInterval(interval);
-  }, []);
-
-  const updateSlotStatus = useCallback((lotId: string, slotId: string, status: SlotStatus) => {
-    setLots((prevLots) =>
-      prevLots.map((lot) => {
-        if (lot.id !== lotId) return lot;
-        
-        const updatedSlots = lot.slots.map((slot) =>
-          slot.id === slotId ? { ...slot, status } : slot
-        );
-        
-        const availableSlots = updatedSlots.filter((s) => s.status === 'available').length;
-        
-        return { ...lot, slots: updatedSlots, availableSlots };
-      })
-    );
-  }, []);
-
-  const reserveSlot = useCallback((lotId: string, slotId: string, duration: number) => {
-    updateSlotStatus(lotId, slotId, 'reserved');
-    
-    // Auto-release after duration
-    setTimeout(() => {
-      updateSlotStatus(lotId, slotId, 'available');
-    }, duration * 60 * 1000);
+  useEffect(() => {
+    const socket = new WebSocket(WS_URL);
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message.event === "ui_update") {
+          const { sensorId, isParked } = message.data;
+          const status: SlotStatus = isParked ? "occupied" : "available";
+          console.log(`Hardware Sync: Slot ${sensorId} -> ${status}`);
+          updateSlotStatus("sensor", sensorId.toString(), status);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    return () => socket.close();
   }, [updateSlotStatus]);
 
   return {
     lots,
     selectedLot,
-    setSelectedLot,
+    setSelectedLot: (lot: ParkingLot | null) =>
+      setSelectedLotId(lot?.id || null),
     selectedSlot,
-    setSelectedSlot,
+    setSelectedSlot: (slot: ParkingSlot | null) =>
+      setSelectedSlotId(slot?.id || null),
     updateSlotStatus,
-    reserveSlot,
   };
 };
