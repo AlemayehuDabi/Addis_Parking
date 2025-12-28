@@ -3,6 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { data: session, isPending } = useSession();
+  console.log("session data: ", session)
   const location = useLocation();
 
   // 1. Show a loading state that matches your Midnight Aurora theme

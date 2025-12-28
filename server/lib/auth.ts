@@ -21,4 +21,15 @@ export const auth = betterAuth({
     emailAndPassword: { 
         enabled: true, 
     }, 
+    basePath: "/api/auth",
+    baseURL: "http://localhost:3000", 
+    trustedOrigins: [
+        'http://localhost:8080', 'addis-parking.vercel.app'
+    ],
+    advanced: {
+        cookiePrefix: "better-auth",
+        // If on localhost (HTTP), Secure must be false
+        // If on Production (HTTPS), Secure must be true
+        crossSiteCookies: true, 
+    }
 });

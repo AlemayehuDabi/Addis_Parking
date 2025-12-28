@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { signIn, signUp } from "@/lib/auth-client";
 
 const AuthPage = () => {
   const [searchParams] = useSearchParams();
@@ -44,84 +45,44 @@ const AuthPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
-    if(mode == "signup"){
-      
-        const SignupBody = {
-          name,
+  
+    try {
+      if (mode === "signup") {
+        // Use Better-Auth Client for Signup
+        const { data, error } = await signUp.email({
           email,
-          password
-        }
-
-        console.log("This is a sign-up body: ", SignupBody)
-
-        const response = await fetch(`${API_URL}/auth/signup`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(SignupBody)
-        })
-
-        if(!response.ok){
-          const error = await response.json()
-          console.log("sign up failed: ", error)
-          return toast({
-            title: "Unable to sign-up",
-            description: error
-          })
-        }
-
-        const data = await response.json()
-        console.log("sign in success: ", data)
-
-        toast({
-          title: "Account created!",
-          description: "Redirecting to your dashboard...",
+          password,
+          name,
+          callbackURL: "/app",
         });
-
-        setTimeout(() => {
-          navigate("/app");
-        }, 1000);
-    }else {
-      const SigninBody = {
-        email,
-        password
+  
+        if (error) {
+          toast({ title: "Sign up failed", description: error.message });
+          return;
+        }
+      } else {
+        // Use Better-Auth Client for Login
+        const { data, error } = await signIn.email({
+          email,
+          password,
+          callbackURL: "/app",
+        });
+  
+        if (error) {
+          toast({ title: "Sign in failed", description: error.message });
+          return;
+        }
       }
-
-      console.log("This is a sign-in body: ", SigninBody)
-
-      const response = await fetch(`${API_URL}/auth/signin`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(SigninBody)
-      })
-
-      if(!response.ok){
-        const error = await response.json()
-        console.log("sign in failed: ", error)
-        return toast({
-          title: "Unable to sign-in",
-          description: error
-        })
-      }
-
-      const data = await response.json()
-
-      console.log("sign in success: ", data)
-      
-      toast({
-        title: "Welcome Back!",
-        description: "Redirecting to your dashboard...",
-      });
-
-      setTimeout(() => {
-        navigate("/app");
-      }, 1000);
+  
+      // On success, Better-Auth handles the cookie and the redirect
+      toast({ title: "Success!", description: "Redirecting..." });
+      navigate("/app");
+  
+    } catch (error) {
+      console.error("Auth error: ", error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleSocialLogin = (provider: string) => {

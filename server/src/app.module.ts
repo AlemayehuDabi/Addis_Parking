@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { auth } from 'lib/auth';
-import { AuthModule } from '@thallesp/nestjs-better-auth';
-import { AuthenticationModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { ParkingModule } from './parking/parking.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -23,8 +21,7 @@ if (!MONGODB_URI) {
 @Module({
   imports: [
     MongooseModule.forRoot(MONGODB_URI),
-    AuthModule.forRoot({auth}),
-    AuthenticationModule,
+    AuthModule,
     ParkingModule,
     ReservationModule
   ],
