@@ -9,7 +9,7 @@ import {
 import { Server, WebSocket } from 'ws';
 import { ParkingService } from './parking.service';
 
-@WebSocketGateway(8080, {
+@WebSocketGateway(8000, {
   cors: {
     origin: '*',
   },
@@ -55,18 +55,22 @@ export class ParkingGateway
       // 2. Update the Database via Service
       // The service should return TRUE only if the status actually changed in the DB
       const hasChanged = await this.parkingService.processStatusUpdate(
-        sensorId,
-        isParked,
+        Number(sensorId),
+        Boolean(isParked),
       );
 
       // 3. BROADCAST to Frontend
       // We always broadcast if hasChanged is true to keep the UI in sync
       if (hasChanged) {
+        console.log(
+          `📣 Change Detected: Sensor ${sensorId} is now ${isParked}`,
+        );
+
         const uiUpdateMessage = JSON.stringify({
           event: 'ui_update', // Matches your frontend message.event check
           data: {
-            sensorId: sensorId, // Matches your frontend destructuring
-            isParked: isParked,
+            sensorId,
+            isParked,
           },
         });
 
@@ -74,6 +78,7 @@ export class ParkingGateway
 
         this.server.clients.forEach((c) => {
           if (c.readyState === WebSocket.OPEN) {
+            console.log('sended');
             c.send(uiUpdateMessage);
           }
         });

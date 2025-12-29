@@ -3,60 +3,53 @@ import { Spot, SpotStatus } from './parking.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-
 @Injectable()
 export class ParkingService {
-  // This lives in RAM. It's super fast.
-  // Key: spotId (number), Value: isParked (boolean)
   private currentState = new Map<number, boolean>();
-
-  // nosiy of utrasonic change - 4.9(parked) and 5.1(unparked) b/c of wind ...
   private lastChangeTime = new Map<number, number>();
 
-  // schema constructor
-  constructor(
-    @InjectModel(Spot.name) private spotModel: Model<Spot> // Injecting the Model
-  ) {}
+  constructor(@InjectModel(Spot.name) private spotModel: Model<Spot>) {}
 
-  // checking if the value changed
-  async processStatusUpdate(sensorId: number, isParked: boolean) {
+  async processStatusUpdate(
+    sensorId: number,
+    isParked: boolean,
+  ): Promise<boolean> {
     const lastState = this.currentState.get(sensorId);
     const now = Date.now();
-  
-    if (isParked !== lastState) {
-      // A change is detected, but let's wait to ensure it's not a glitch
-      const lastTime = this.lastChangeTime.get(sensorId) || 0;
-      
-      if (now - lastTime > 2000) { // Only update if 5 seconds have passed since last flip
-        this.currentState.set(sensorId, isParked);
-        this.lastChangeTime.set(sensorId, now);
-        await this.saveToDatabase(sensorId, isParked);
-        return { changed: true };
-      }
-    }
 
-    return { changed: false };
+    // 1. If the state is exactly the same as RAM, do nothing
+    if (isParked === lastState) return false;
+
+    // 2. Debounce logic: prevent flickering if the car is moving or sensor is noisy
+    const lastTime = this.lastChangeTime.get(sensorId) || 0;
+    if (now - lastTime < 2000) return false; // 2 second "cooldown"
+
+    // 3. Update RAM state
+    this.currentState.set(sensorId, isParked);
+    this.lastChangeTime.set(sensorId, now);
+
+    // 4. Save to DB
+    await this.saveToDatabase(sensorId, isParked);
+
+    return true; // Return true so the gateway knows to broadcast
   }
 
-  // save it inside db
   private async saveToDatabase(sensorId: number, isParked: boolean) {
-    // Update the current status of the spot
-    const updatedSpot = await this.spotModel.findOneAndUpdate(
-      { sensorId }, // Find by the Arduino's sensor ID
-      { 
-        $set: { 
+    return await this.spotModel.findOneAndUpdate(
+      { sensorId },
+      {
+        $set: {
           isHardwareDetected: isParked,
           status: isParked ? SpotStatus.OCCUPIED : SpotStatus.AVAILABLE,
-          lastHeartbeat: new Date()
+          lastHeartbeat: new Date(),
         },
-        // prevent spotnumber duplication
+        // IMPORTANT: This only runs when a NEW spot is created (Upsert)
+        // This prevents the "spotNumber: null" duplicate error!
         $setOnInsert: {
-          spotNumber: `S-${sensorId}`
-        }
+          spotNumber: `S-${sensorId}`,
+        },
       },
-      { new: true, upsert: true } // 'upsert' creates it if it doesn't exist
+      { new: true, upsert: true },
     );
-
-    return updatedSpot;
   }
 }

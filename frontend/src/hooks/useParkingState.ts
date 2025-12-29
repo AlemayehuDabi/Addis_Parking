@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { ParkingSlot, ParkingLot, SlotStatus } from "@/types/parking";
 
-const WS_URL = "ws://192.168.1.113:8080";
+// Use your computer's actual IP. Verify it didn't change!
+const WS_URL = "ws://192.168.1.113:8000";
 
 const initialLots: ParkingLot[] = [
   {
@@ -31,7 +32,7 @@ const initialLots: ParkingLot[] = [
     pricePerHour: 50,
     rating: 4.8,
     distance: 0.3,
-    slots: [], // Assuming generateSlots helper is available or simplified
+    slots: [],
   },
 ];
 
@@ -41,46 +42,89 @@ export const useParkingState = () => {
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 
   // Derive the active lot and slot from the current 'lots' state
+  // This is critical: whenever 'lots' changes, these variables refresh automatically
   const selectedLot = lots.find((l) => l.id === selectedLotId) || null;
   const selectedSlot =
     selectedLot?.slots.find((s) => s.id === selectedSlotId) || null;
 
   const updateSlotStatus = useCallback(
     (lotId: string, slotId: string, status: SlotStatus) => {
-      setLots((prevLots) =>
-        prevLots.map((lot) => {
+      console.log(`Updating Lot: ${lotId}, Slot: ${slotId} to ${status}`);
+
+      setLots((prevLots) => {
+        return prevLots.map((lot) => {
           if (lot.id !== lotId) return lot;
-          const updatedSlots = lot.slots.map((s) =>
-            s.id === slotId ? { ...s, status } : s
-          );
+
+          const updatedSlots = lot.slots.map((s) => {
+            // Safety: Convert both to string to avoid Number vs String comparison issues
+            if (String(s.id) === String(slotId)) {
+              return { ...s, status };
+            }
+            return s;
+          });
+
+          const availableCount = updatedSlots.filter(
+            (s) => s.status === "available"
+          ).length;
+
           return {
             ...lot,
             slots: updatedSlots,
-            availableSlots: updatedSlots.filter((s) => s.status === "available")
-              .length,
+            availableSlots: availableCount,
           };
-        })
-      );
+        });
+      });
     },
     []
   );
 
   useEffect(() => {
-    const socket = new WebSocket(WS_URL);
-    socket.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        if (message.event === "ui_update") {
-          const { sensorId, isParked } = message.data;
-          const status: SlotStatus = isParked ? "occupied" : "available";
-          console.log(`Hardware Sync: Slot ${sensorId} -> ${status}`);
-          updateSlotStatus("sensor", sensorId.toString(), status);
+    let socket: WebSocket | null = null;
+    let reconnectTimeout: NodeJS.Timeout;
+
+    const connect = () => {
+      console.log("Attempting to connect to WebSocket...");
+      socket = new WebSocket(WS_URL);
+
+      socket.onopen = () => {
+        console.log("✅ WebSocket Connected to Backend");
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+
+          if (message.event === "ui_update") {
+            // Use message.data because your NestJS gateway wraps it in { event, data }
+            const { sensorId, isParked } = message.data;
+            const status: SlotStatus = isParked ? "occupied" : "available";
+
+            console.log(`🎯 Hardware Sync: Slot ${sensorId} -> ${status}`);
+
+            // We target the "sensor" lot specifically for prototype
+            updateSlotStatus("sensor", String(sensorId), status);
+          }
+        } catch (err) {
+          console.error("❌ Failed to parse WebSocket message:", err);
         }
-      } catch (err) {
-        console.error(err);
-      }
+      };
+
+      socket.onclose = () => {
+        console.warn("⚠️ WebSocket Disconnected. Retrying in 3s...");
+        reconnectTimeout = setTimeout(connect, 3000);
+      };
+
+      socket.onerror = (err) => {
+        console.error("🚨 WebSocket Error:", err);
+      };
     };
-    return () => socket.close();
+
+    connect();
+
+    return () => {
+      if (socket) socket.close();
+      clearTimeout(reconnectTimeout);
+    };
   }, [updateSlotStatus]);
 
   return {

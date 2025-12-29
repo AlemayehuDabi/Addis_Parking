@@ -11,19 +11,19 @@ export enum SpotStatus {
 @Schema({ timestamps: true })
 export class Spot extends Document {
   @Prop({ required: true, unique: true })
-  spotNumber: string; // e.g., "s-1", "s-2"
+  spotNumber: string; // e.g., "S-1", "S-2"
 
   @Prop({ required: true, unique: true })
-  sensorId: number; // The ID sent by the Arduino (e.g., 1, 2, 3)
+  sensorId: number; // 1 or 2
 
   @Prop({ type: String, enum: SpotStatus, default: SpotStatus.AVAILABLE })
   status: SpotStatus;
 
   @Prop({ default: false })
-  isHardwareDetected: boolean; // True if sensor sees a car, False if empty
+  isHardwareDetected: boolean;
 
   @Prop()
-  lastHeartbeat: Date; // To check if the Arduino is still online
+  lastHeartbeat: Date;
 }
 
 export const SpotSchema = SchemaFactory.createForClass(Spot);
