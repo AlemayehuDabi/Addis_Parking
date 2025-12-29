@@ -11,7 +11,7 @@ export enum SpotStatus {
 @Schema({ timestamps: true })
 export class Spot extends Document {
   @Prop({ required: true, unique: true })
-  spotNumber: string; // e.g., "A-101"
+  spotNumber: string; // e.g., "s-1", "s-2"
 
   @Prop({ required: true, unique: true })
   sensorId: number; // The ID sent by the Arduino (e.g., 1, 2, 3)

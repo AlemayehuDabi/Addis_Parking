@@ -48,7 +48,11 @@ export class ParkingService {
           isHardwareDetected: isParked,
           status: isParked ? SpotStatus.OCCUPIED : SpotStatus.AVAILABLE,
           lastHeartbeat: new Date()
-        } 
+        },
+        // prevent spotnumber duplication
+        $setOnInsert: {
+          spotNumber: `S-${sensorId}`
+        }
       },
       { new: true, upsert: true } // 'upsert' creates it if it doesn't exist
     );
