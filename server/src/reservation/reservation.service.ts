@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -65,17 +65,39 @@ export class ReservationService {
     }).populate('spotId userId')
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reservation`;
+  async findOne(id: string) {
+
+    const isReservation = await this.reservationModel.findById(id)
+    
+    if(!isReservation){
+      throw new NotFoundException(`Reservation with ID ${id} not found`)
+    }
+
+    return isReservation
   }
 
-  async update(id: number, updateReservationDto: UpdateReservationDto) {
-    return await this.reservationModel.findByIdAndUpdate(id, {
+  async update(id: string, updateReservationDto: UpdateReservationDto) {
+
+    const isUpdated = await this.reservationModel.findByIdAndUpdate(id, {
       status: updateReservationDto.status
-    }) 
+    })
+
+    if(!isUpdated){
+      throw new NotFoundException(`Reservation with ID ${id} not found`)
+    }
+
+    return isUpdated
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} reservation`;
+  async remove(id: string) {
+    const isUpdated = await this.reservationModel.findByIdAndUpdate(id, {
+      status: "cancelled"
+    })
+
+    if(!isUpdated){
+      throw new NotFoundException(`Reservation with ID ${id} not found`)
+    }
+
+    return isUpdated
   }
 }
