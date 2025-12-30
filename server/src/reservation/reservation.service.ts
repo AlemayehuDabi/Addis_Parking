@@ -43,8 +43,26 @@ export class ReservationService {
     })
   }
 
-  findAll() {
-    return `This action returns all reservation`;
+  async findAll(status?: string) {
+    const query = status ? { status } : {};
+    
+    return await this.reservationModel
+      .find(query)
+      .populate('spotId', 'spotNumber') // Shows the spot name/number
+      .populate('userId', 'fullName email') // Shows who booked it
+      .sort({ startTime: -1 }) // Newest reservations at the top
+      .limit(100)
+      .exec();
+  }
+
+  async findLiveReservations () {
+    const now = new Date()
+
+    return await this.reservationModel.find({
+      startTime: {$lte: now},
+      endTime: {$gte: now},
+      status: 'active'
+    }).populate('spotId userId')
   }
 
   findOne(id: number) {
