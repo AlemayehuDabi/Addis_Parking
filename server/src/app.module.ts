@@ -5,6 +5,9 @@ import { AuthModule } from './auth/auth.module';
 import { ParkingModule } from './parking/parking.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ParkingLotModule } from './parking-lot/parking-lot.module';
+import { ParkinglotModule } from './parkinglot/parkinglot.module';
+import { ParkingLotModule } from './parking-lot/parking-lot.module';
 
 import * as dotenv from "dotenv";
 
@@ -23,7 +26,9 @@ if (!MONGODB_URI) {
     MongooseModule.forRoot(MONGODB_URI),
     AuthModule,
     ParkingModule,
-    ReservationModule
+    ReservationModule,
+    ParkingLotModule,
+    ParkinglotModule
   ],
   controllers: [AppController],
   providers: [AppService],

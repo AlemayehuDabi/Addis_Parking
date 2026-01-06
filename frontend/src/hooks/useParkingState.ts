@@ -34,6 +34,45 @@ const initialLots: ParkingLot[] = [
     distance: 0.3,
     slots: [],
   },
+  {
+    id: "lot-2",
+    name: "Piazza Municipality Parking",
+    address: "Dejazmach Jote St (Near City Hall), Piazza",
+    latitude: 9.0355,
+    longitude: 38.7522,
+    totalSlots: 120,
+    availableSlots: 34,
+    pricePerHour: 30,
+    rating: 4.1,
+    distance: 1.5,
+    slots: []
+  },
+  {
+    id: "lot-3",
+    name: "Friendship Business Center",
+    address: "Africa Avenue (Bole Road), Addis Ababa",
+    latitude: 8.9948,
+    longitude: 38.7842,
+    totalSlots: 65,
+    availableSlots: 12,
+    pricePerHour: 60,
+    rating: 4.6,
+    distance: 0.9,
+    slots: []
+  },
+  {
+    id: "lot-4",
+    name: "Kazanchis UN-ECA Area Parking",
+    address: "Menelik II Ave, Kazanchis",
+    latitude: 9.0191,
+    longitude: 38.7668,
+    totalSlots: 150,
+    availableSlots: 58,
+    pricePerHour: 40,
+    rating: 4.4,
+    distance: 2.2,
+    slots: []
+  }
 ];
 
 export const useParkingState = () => {

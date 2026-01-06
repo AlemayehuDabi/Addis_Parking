@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Reservation } from '@/types/parking';
+import { toast } from 'sonner';
+
+const apiUrl = import.meta.env.VITE_API_URL
 
 export const useReservation = () => {
   const [activeReservation, setActiveReservation] = useState<Reservation | null>(null);
@@ -55,43 +58,114 @@ export const useReservation = () => {
     return () => clearInterval(interval);
   }, [activeReservation]);
 
-  const createReservation = useCallback((
+  const createReservation = useCallback(async (
     lotId: string,
     slotId: string,
     duration: number,
-    pricePerHour: number
+    pricePerHour: number,
+    licensePlate: String
   ) => {
+    try {
+      
     const now = new Date();
     const endTime = new Date(now.getTime() + duration * 60 * 60 * 1000);
     const totalAmount = Math.ceil(duration * pricePerHour);
 
-    const reservation: Reservation = {
-      id: `res-${Date.now()}`,
-      lotId,
-      slotId,
-      userId: 'user-1',
-      vehiclePlate: 'AA-1234',
+    const createReservationBody = {
+      userId: "userId",
+      spotId: slotId,
+      parkingLotId: lotId,
       startTime: now,
       endTime,
-      totalAmount,
-      status: 'active',
-      createdAt: now,
-    };
+      totalFee: totalAmount,
+      licensePlate,
+    }
+
+    // calling post api
+    const response = await fetch(`${apiUrl}/reservation`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(createReservationBody)
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      // 2. Error Handling: Get the error message from NestJS
+      const errorData = await response.json();
+      // toast
+      toast(`Failed to cancel: ${errorData.message}`); 
+      return;
+    }
+
+    console.log("This is reservation response: ", data)
+
+    const reservation: Reservation = data
+    // = {
+    //   id: `res-${Date.now()}`,
+    //   lotId,
+    //   slotId,
+    //   userId: 'user-1',
+    //   vehiclePlate: 'AA-1234',
+    //   startTime: now,
+    //   endTime,
+    //   totalAmount,
+    //   status: 'active',
+    //   createdAt: now,
+    // };
 
     setActiveReservation(reservation);
     setTimeRemaining(duration * 60 * 60);
 
     return reservation;
+    } catch (error) {
+      // 4. Network Error Handling
+      console.error("Network error during cancellation:", error);
+      toast("Connection lost. Please try again.");
+    }
   }, []);
 
-  const cancelReservation = useCallback(() => {
-    if (activeReservation) {
-      setReservationHistory((prev) => [
-        { ...activeReservation, status: 'cancelled' },
-        ...prev,
-      ]);
-      setActiveReservation(null);
-      setTimeRemaining(0);
+  const cancelReservation = useCallback(async (
+    reservationId: string
+  ) => {
+    try {
+          
+        // 1. Logic Check: Don't try to cancel if we don't have an ID
+        if (!reservationId) {
+          console.log("No reservation Id!")
+          return
+        }
+
+        const response = await fetch(`${apiUrl}/reservations/${reservationId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+        })
+
+        if (!response.ok) {
+          // 2. Error Handling: Get the error message from NestJS
+          const errorData = await response.json();
+          // toast
+          toast(`Failed to cancel: ${errorData.message}`); 
+          return;
+        }
+
+        if (activeReservation) {
+          const cancelledItem = { ...activeReservation, status: 'cancelled' as const };
+          
+          setReservationHistory((prev) => [cancelledItem, ...prev]);
+          setActiveReservation(null);
+          setTimeRemaining(0);
+          
+          toast("Reservation cancelled successfully")
+        }
+    } catch (error) {
+        // 4. Network Error Handling
+        console.error("Network error during cancellation:", error);
+        toast("Connection lost. Please try again.");
     }
   }, [activeReservation]);
 

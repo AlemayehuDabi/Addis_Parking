@@ -62,7 +62,13 @@ export class ReservationService {
       startTime: {$lte: now},
       endTime: {$gte: now},
       status: 'active'
-    }).populate('spotId userId')
+    }).populate('spotId userId ParkingLotId')
+  }
+
+  async findActive () {
+    return await this.reservationModel.find({
+      status: 'active'
+    }).populate('spotId userId ParkingLotId')
   }
 
   async findOne(id: string) {
