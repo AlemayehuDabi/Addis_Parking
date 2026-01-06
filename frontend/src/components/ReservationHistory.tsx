@@ -38,7 +38,7 @@ Thank you for using Smart Parking!
     return (
       <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
         <Calendar className="h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-4 text-lg font-semibold">No Booking History</h3>
+        <h3 className="mt-4 text-lg font-semibold text-gray-300">No Booking History</h3>
         <p className="mt-2 text-sm text-muted-foreground">
           Your past reservations will appear here
         </p>
@@ -48,7 +48,7 @@ Thank you for using Smart Parking!
 
   return (
     <div className="space-y-3">
-      <h3 className="flex items-center gap-2 font-semibold">
+      <h3 className="flex items-center gap-2 font-semibold text-gray-300">
         <Calendar className="h-4 w-4" />
         Booking History
       </h3>
@@ -65,7 +65,7 @@ Thank you for using Smart Parking!
             <div className="flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">Slot {reservation.slotId}</span>
+                  <span className="font-semibold text-gray-300">Slot {reservation.slotId}</span>
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                       reservation.status === 'completed'
@@ -87,7 +87,7 @@ Thank you for using Smart Parking!
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-lg font-bold">{reservation.totalAmount} ETB</span>
+                <span className="text-lg font-bold text-gray-300">{reservation.totalAmount} ETB</span>
               </div>
             </div>
 
@@ -100,7 +100,7 @@ Thank you for using Smart Parking!
                 variant="ghost"
                 size="sm"
                 onClick={() => downloadReceipt(reservation)}
-                className="gap-1 text-xs"
+                className="gap-1 text-xs text-gray-300"
               >
                 <Download className="h-3 w-3" />
                 Receipt

@@ -30,33 +30,41 @@ const App = () => (
           <Route
             path="/app"
             element={
+              <ProtectedRoute>
               <AppLayout>
                 <MapPage />
               </AppLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/app/lots"
             element={
+              <ProtectedRoute>
               <AppLayout>
                 <LotsPage />
               </AppLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/app/wallet"
             element={
+              <ProtectedRoute> 
               <AppLayout>
                 <WalletPage />
               </AppLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/app/dashboard"
             element={
+              <ProtectedRoute>
               <AppLayout>
                 <DashboardPage />
               </AppLayout>
+              </ProtectedRoute>
             }
           />
 

@@ -10,7 +10,7 @@ async function bootstrap() {
   // light weight for iot
   app.useWebSocketAdapter(new WsAdapter(app));
 
-  // app.setGlobalPrefix('api')
+  app.setGlobalPrefix('api')
 
   // api integration
   app.enableCors({

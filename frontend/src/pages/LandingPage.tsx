@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
+import { useSession } from "@/lib/auth-client";
 
 const LandingPage = () => {
   const targetRef = useRef<HTMLDivElement>(null);
@@ -17,6 +18,10 @@ const LandingPage = () => {
   
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+  // session
+  const { data: session, isPending } = useSession();
+  
 
   const features = [
     {
@@ -89,11 +94,16 @@ const LandingPage = () => {
             </div>
             
             <div className="flex items-center gap-3">
-              <Link to="/auth">
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                  Sign In
-                </Button>
-              </Link>
+              {
+                !session && (
+                  <Link to="/auth">
+                    <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                      Sign In
+                    </Button>
+                  </Link>
+                )
+              }
+              
               <Link to="/app">
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-6">
                   Launch App
@@ -153,23 +163,34 @@ const LandingPage = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/auth?mode=signup">
-                <Button 
-                  size="lg" 
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-8 py-6 text-lg font-semibold group"
-                >
-                  Get Started
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="rounded-xl px-8 py-6 text-lg border-border/50 hover:bg-secondary/50"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                Watch Demo
-              </Button>
+              {
+                !session ? (
+                  <Link to="/auth?mode=signup">
+                    <Button 
+                      size="lg" 
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-8 py-6 text-lg font-semibold group"
+                    >
+                      Get Started
+                      <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/app">
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="rounded-xl px-8 py-6 text-lg bg-white border-border/50 hover:bg-secondary/50 hover:text-white hover:border-white/50"
+                    >
+                      <Play className="w-5 h-5 mr-2" />
+                      Watch Demo
+                    </Button>
+                  </Link>
+                )
+              }             
+
+
+              
+
             </div>
           </motion.div>
         </div>

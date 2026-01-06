@@ -5,7 +5,7 @@ import type { Request, Response } from "express"; // Use 'import type' to fix TS
 
 @Controller('auth')
 export class AuthController {
-  @All(["", "/*"])
+  @All("*")
   async handleAuth(@Req() req: Request, @Res() res: Response) {
     // Use toNodeHandler to fix TS(2554)
     return toNodeHandler(auth)(req, res);

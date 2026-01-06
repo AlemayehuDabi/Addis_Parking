@@ -6,6 +6,7 @@ import { ReservationHistory } from '@/components/ReservationHistory';
 import { toast } from '@/hooks/use-toast';
 import { User, Car, Mail, Phone, Edit2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useSession } from '@/lib/auth-client';
 
 const DashboardPage = () => {
   const { activeReservation, timeRemaining, reservationHistory, cancelReservation, formatTimeRemaining } = useReservation();
@@ -15,8 +16,8 @@ const DashboardPage = () => {
     ? lots.find((lot) => lot.id === activeReservation.lotId)
     : null;
 
-  const handleCancel = () => {
-    cancelReservation();
+  const handleCancel = (reservationId: string) => {
+    cancelReservation(reservationId);
     toast({
       title: "Booking Ended",
       description: "Your parking session has been ended",
@@ -30,11 +31,14 @@ const DashboardPage = () => {
     });
   };
 
+  // session
+  const {data: session, isPending} = useSession()
+
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="border-b border-border bg-card p-4">
-        <h1 className="text-xl font-bold">Dashboard</h1>
+        <h1 className="text-xl font-bold text-white">Dashboard</h1>
         <p className="text-sm text-muted-foreground">Manage your parking</p>
       </div>
 
@@ -53,9 +57,9 @@ const DashboardPage = () => {
                   <User className="h-8 w-8 text-primary-foreground" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold">Abebe Kebede</h2>
+                  <h2 className="text-lg font-bold text-gray-200">{session.user.name}</h2>
                   <div className="mt-1 flex items-center gap-2">
-                    <span className="flex items-center gap-1 rounded-lg bg-muted px-2 py-1 text-xs">
+                    <span className="flex items-center gap-1 rounded-lg bg-muted px-2 py-1 text-xs text-gray-300">
                       <Car className="h-3 w-3" />
                       AA-1234
                     </span>
@@ -71,11 +75,11 @@ const DashboardPage = () => {
             <div className="mt-4 grid grid-cols-2 gap-3">
               <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3 text-sm">
                 <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">abebe@email.com</span>
+                <span className="text-muted-foreground">{session.user.email}</span>
               </div>
               <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3 text-sm">
                 <Phone className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">+251 91 234 5678</span>
+                <span className="text-muted-foreground">Phone number will be available soon.</span>
               </div>
             </div>
           </motion.div>
