@@ -15,6 +15,9 @@ export enum ReservationStatus {
   
     @Prop({ type: 'ObjectId', ref: 'Spot', required: true })
     spotId: string;
+
+    @Prop({type: 'ObjectId', ref: 'Lot', required: true})
+    lotId: string;
   
     @Prop({ required: true })
     startTime: Date;

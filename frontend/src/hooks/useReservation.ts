@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Reservation } from '@/types/parking';
 
+const apiUrl = import.meta.env.VITE_API_URL
+
 export const useReservation = () => {
   const [activeReservation, setActiveReservation] = useState<Reservation | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
@@ -55,7 +57,7 @@ export const useReservation = () => {
     return () => clearInterval(interval);
   }, [activeReservation]);
 
-  const createReservation = useCallback((
+  const createReservation = useCallback(async (
     lotId: string,
     slotId: string,
     duration: number,
@@ -64,6 +66,20 @@ export const useReservation = () => {
     const now = new Date();
     const endTime = new Date(now.getTime() + duration * 60 * 60 * 1000);
     const totalAmount = Math.ceil(duration * pricePerHour);
+
+    const createReservationBody = {
+      spotId: lotId,
+      // startTime: 
+    }
+
+    // calling post api
+    const response = await fetch(`${apiUrl}/reservation`, {
+      method: "POST",
+      headers: {
+        'ContentType': 'application/json'
+      },
+      body: JSON.stringify(createReservationBody)
+    })
 
     const reservation: Reservation = {
       id: `res-${Date.now()}`,
