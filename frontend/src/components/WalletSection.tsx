@@ -45,7 +45,7 @@ export const WalletSection = ({ wallet, onAddFunds }: WalletSectionProps) => {
       {/* Transaction History */}
       <div className="glass-card rounded-xl p-4">
         <h3 className="flex items-center gap-2 font-semibold">
-          <span>Recent Transactions</span>
+          <span className='text-gray-200'>Recent Transactions</span>
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
             {wallet.transactions.length}
           </span>

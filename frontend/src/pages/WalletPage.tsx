@@ -17,7 +17,7 @@ const WalletPage = () => {
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="border-b border-border bg-card p-4">
-        <h1 className="text-xl font-bold">Wallet</h1>
+        <h1 className="text-xl font-bold text-white">Wallet</h1>
         <p className="text-sm text-muted-foreground">Manage your parking balance</p>
       </div>
 
