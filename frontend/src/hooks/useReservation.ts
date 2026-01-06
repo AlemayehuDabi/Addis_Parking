@@ -183,6 +183,14 @@ export const useReservation = () => {
     return `${secs}s`;
   }, []);
 
+  // update status - by id
+
+  // findOne - by id
+
+  // findActive
+
+  // findAll - history
+
   return {
     activeReservation,
     timeRemaining,
