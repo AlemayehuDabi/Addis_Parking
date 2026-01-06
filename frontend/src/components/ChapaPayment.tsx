@@ -73,7 +73,7 @@ export const ChapaPayment = ({ isOpen, onClose, onSuccess, isProcessing }: Chapa
                     <p className="text-sm text-muted-foreground">Powered by Chapa</p>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
+                <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full text-white">
                   <X className="h-5 w-5" />
                 </Button>
               </div>
@@ -102,7 +102,7 @@ export const ChapaPayment = ({ isOpen, onClose, onSuccess, isProcessing }: Chapa
                               : 'border-border bg-muted/30 hover:border-primary/50'
                           }`}
                         >
-                          <span className="text-lg font-bold">{amt}</span>
+                          <span className="text-lg font-bold text-gray-300">{amt}</span>
                           <span className="block text-xs text-muted-foreground">ETB</span>
                         </motion.button>
                       ))}
@@ -113,7 +113,7 @@ export const ChapaPayment = ({ isOpen, onClose, onSuccess, isProcessing }: Chapa
                       <label className="text-sm font-medium text-muted-foreground">
                         Or enter custom amount
                       </label>
-                      <div className="mt-2 flex items-center gap-2">
+                      <div className="mt-2 flex items-center gap-2 text-white">
                         <Input
                           type="number"
                           placeholder="Enter amount"

@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { NavLink, useLocation, Link } from 'react-router-dom';
 import { Map, LayoutGrid, Wallet, User, Car, LogOut } from 'lucide-react';
+import { signOut } from '@/lib/auth-client';
+import { Button } from './ui/button';
 
 const navItems = [
   { path: '/app', icon: Map, label: 'Map' },
@@ -11,6 +13,7 @@ const navItems = [
 
 export const BottomNav = () => {
   const location = useLocation();
+
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-card/95 backdrop-blur-lg md:hidden">
@@ -58,6 +61,8 @@ export const BottomNav = () => {
 
 export const Sidebar = () => {
   const location = useLocation();
+
+  const handleSignOut = () => signOut()
 
   return (
     <aside className="hidden h-screen w-64 flex-col border-r border-border bg-sidebar md:flex sticky top-0">
@@ -120,13 +125,14 @@ export const Sidebar = () => {
             <p className="text-xs text-sidebar-foreground/60">AA-1234</p>
           </div>
         </div>
-        <Link
-          to="/"
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
+        <button
+         onClick={handleSignOut}
+        // to="/"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors w-full"
         >
           <LogOut className="h-4 w-4" />
           <span>Sign Out</span>
-        </Link>
+        </button>
       </div>
     </aside>
   );
