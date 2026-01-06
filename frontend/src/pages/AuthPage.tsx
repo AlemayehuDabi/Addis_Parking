@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { signIn, signUp } from "@/lib/auth-client";
+import { authClient, signIn, signUp } from "@/lib/auth-client";
 
 const AuthPage = () => {
   const [searchParams] = useSearchParams();
@@ -85,11 +85,30 @@ const AuthPage = () => {
     }
   };
 
-  const handleSocialLogin = (provider: string) => {
-    toast({
-      title: `${provider} Login`,
-      description: "Social authentication will be available soon.",
-    });
+  const handleSocialLogin = async (provider: string) => {
+    try {
+
+      console.log("this is the social provider: ", provider.toLocaleLowerCase())
+
+      const response = await authClient.signIn.social({
+        provider: provider.toLocaleLowerCase()
+      })
+
+      if (response.error){
+        toast({
+          title: "Failed to login using Social Provider",
+          description: response.error.message
+        })
+        return 
+      }
+
+      // On success, Better-Auth handles the cookie and the redirect
+      toast({ title: "Success!", description: "Redirecting..." });
+      navigate("/app");
+      
+    } catch (error) {
+      console.log("error: ", error)
+    }
   };
 
   return (
