@@ -8,7 +8,7 @@ interface ActiveBookingProps {
   timeRemaining: number;
   formatTime: (seconds: number) => string;
   lotName?: string;
-  onCancel: () => void;
+  onCancel: (reservationId: string) => void;
   onFindCar: () => void;
 }
 
@@ -26,7 +26,7 @@ export const ActiveBooking = ({
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
           <Clock className="h-8 w-8 text-muted-foreground" />
         </div>
-        <h3 className="mt-4 text-lg font-semibold">No Active Booking</h3>
+        <h3 className="mt-4 text-lg font-semibold text-gray-300">No Active Booking</h3>
         <p className="mt-2 text-sm text-muted-foreground">
           Reserve a parking spot to see your booking here
         </p>
@@ -115,7 +115,7 @@ export const ActiveBooking = ({
             Find My Car
           </Button>
           <Button
-            onClick={onCancel}
+            onClick={() => onCancel(reservation.id)}
             variant="destructive"
             className="flex items-center gap-2"
           >
