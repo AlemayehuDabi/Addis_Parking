@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export enum SpotStatus {
   AVAILABLE = 'available',
@@ -10,6 +10,9 @@ export enum SpotStatus {
 
 @Schema({ timestamps: true })
 export class Spot extends Document {
+  @Prop({ type:Types.ObjectId, ref: 'ParkingLot',  required: true, index: true})
+  parkingLotId: Types.ObjectId;
+
   @Prop({ required: true, unique: true })
   spotNumber: string; // e.g., "S-1", "S-2"
 
