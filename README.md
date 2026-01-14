@@ -1,3 +1,4 @@
+![addis parking](https://github.com/user-attachments/assets/42669d02-d8bd-41a3-87ca-1f72635eecf0)
 # 🚗 AddisParking: IoT-Driven Smart Parking System
 
 AddisParking is a full-stack IoT solution designed to modernize the urban parking infrastructure of Addis Ababa. By bridging physical hardware (ESP32/Ultrasonic Sensors) with a high-performance cloud backend (NestJS/MongoDB), the platform provides sub-second real-time updates and seamless reservation workflows.
